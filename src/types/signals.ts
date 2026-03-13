@@ -235,7 +235,7 @@ export interface SignalFilters {
   direction?: Direction | "all";
   minScore?: number;
   minPremium?: number;
-  signalType?: SignalType | "all";
+  signalType?: SignalType | "all" | "combo";
   symbols?: string[];
   maxDte?: number;
   dateRange?: { from: Date; to: Date };

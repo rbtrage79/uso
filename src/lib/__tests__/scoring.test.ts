@@ -11,7 +11,6 @@ import {
   scoreEventProximity,
   scoreDirectionality,
   scoreCombo,
-  identifyStructure,
 } from "../scoring/dimensions";
 import type { RawTradeLeg } from "../../types/signals";
 

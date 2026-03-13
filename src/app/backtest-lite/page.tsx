@@ -196,12 +196,12 @@ function ReplayTab() {
         simulatedScore <= fixture.expected.maxScore;
 
       const detectorFired: string[] = [];
-      if (fixture.signal.scoreVolOi > 60)          detectorFired.push("VolumeOI");
-      if (fixture.signal.scoreNotional > 60)        detectorFired.push("Notional");
-      if (fixture.signal.scoreTimeOfDay > 55)       detectorFired.push("TimeOfDay");
-      if (fixture.signal.scoreIvAbnormality > 60)   detectorFired.push("IVAbnormality");
-      if (fixture.signal.scoreEventProximity > 60)  detectorFired.push("EventProximity");
-      if (fixture.signal.scoreDirectionality > 65)  detectorFired.push("Directionality");
+      if ((fixture.signal.scoreVolOi ?? 0) > 60)          detectorFired.push("VolumeOI");
+      if ((fixture.signal.scoreNotional ?? 0) > 60)        detectorFired.push("Notional");
+      if ((fixture.signal.scoreTimeOfDay ?? 0) > 55)       detectorFired.push("TimeOfDay");
+      if ((fixture.signal.scoreIvAbnormality ?? 0) > 60)   detectorFired.push("IVAbnormality");
+      if ((fixture.signal.scoreEventProximity ?? 0) > 60)  detectorFired.push("EventProximity");
+      if ((fixture.signal.scoreDirectionality ?? 0) > 65)  detectorFired.push("Directionality");
       if (fixture.signal.isCombo)                   detectorFired.push("ComboDetector");
       if (fixture.tags.includes("theme_sync"))      detectorFired.push("ThemeSync");
       if (fixture.tags.includes("high_novelty"))    detectorFired.push("NoveltyScorer");
@@ -455,9 +455,9 @@ function FixturesTab() {
                       {leg.optionType}
                     </span>
                     <span className="text-zinc-300">${leg.strike}</span>
-                    <span className="text-zinc-500">{leg.expirationDate}</span>
+                    <span className="text-zinc-500">{leg.expirationDate.toLocaleDateString()}</span>
                     <span className="text-zinc-400">{leg.quantity.toLocaleString()} cts</span>
-                    <span className="text-zinc-400 ml-auto">{(leg.impliedVol * 100).toFixed(0)}% IV</span>
+                    <span className="text-zinc-400 ml-auto">{((leg.impliedVol ?? 0) * 100).toFixed(0)}% IV</span>
                   </div>
                 ))}
               </div>

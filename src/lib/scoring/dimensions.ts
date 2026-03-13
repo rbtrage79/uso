@@ -330,7 +330,7 @@ export interface ComboInput {
   isLinkedByTime: boolean;
   isLinkedByExpiry: boolean;
   isLinkedByUnderlying: boolean;
-  identifiedStructure?: "spread" | "straddle" | "strangle" | "risk_reversal" | "calendar" | "butterfly" | "unknown";
+  identifiedStructure?: "spread" | "straddle" | "strangle" | "risk_reversal" | "calendar" | "butterfly" | "condor" | "call_spread" | "put_spread" | "unknown";
 }
 
 export function scoreCombo(input: ComboInput): number {

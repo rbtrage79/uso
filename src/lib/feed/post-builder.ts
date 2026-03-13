@@ -4,7 +4,7 @@
  */
 
 import type { FullyEnrichedSignal } from "@/lib/enrichment/signal-enricher";
-import type { FeedPost, EventBadge, FeedPostLeg } from "@/types/feed";
+import type { FeedPost, EventBadge, FeedPostLeg, DirectionType } from "@/types/feed";
 import { generateTags } from "./tag-generator";
 import { generateExplanations } from "./explanation-generator";
 import { nanoid } from "nanoid";
@@ -41,15 +41,23 @@ export function buildFeedPost(signal: FullyEnrichedSignal, now = new Date()): Fe
   const { payload, events, peers, themes, factors, insights, ranking } = signal;
   const primaryLeg = payload.legs[0];
 
-  const direction = payload.direction;
+  const direction: DirectionType =
+    payload.direction === "mixed" ? "neutral" : payload.direction as DirectionType;
   const isCombo = payload.isCombo;
   const signalKind = payload.signalType as FeedPost["signalKind"];
-  const signalLabel = {
-    sweep: "Sweep", block: "Block", combo: "Combo",
-    repeat_sweep: "Repeat Sweep", dark_pool: "Dark Pool", single_leg: "Single",
-  }[payload.signalType] ?? "Signal";
+  const SIGNAL_LABELS: Record<string, string> = {
+    sweep:                "Sweep",
+    block:                "Block",
+    single_leg:           "Single",
+    repeat_sweep:         "Repeat Sweep",
+    combo_spread:         "Combo Spread",
+    combo_straddle:       "Straddle",
+    combo_risk_reversal:  "Risk Reversal",
+    combo_other:          "Combo",
+  };
+  const signalLabel = SIGNAL_LABELS[payload.signalType] ?? "Signal";
 
-  const expIso = primaryLeg?.expirationDate ?? "";
+  const expIso = primaryLeg?.expirationDate?.toISOString() ?? "";
   const expLabel = expIso ? formatExpiry(expIso) : "—";
   const dte = primaryLeg?.dte ?? 30;
   const iv = primaryLeg?.impliedVol ?? 0;
@@ -69,13 +77,13 @@ export function buildFeedPost(signal: FullyEnrichedSignal, now = new Date()): Fe
   const legs: FeedPostLeg[] = payload.legs.map((l) => ({
     optionType: l.optionType as "call" | "put",
     strike: l.strike,
-    expiration: formatExpiry(l.expirationDate),
-    expirationISO: l.expirationDate,
+    expiration: formatExpiry(l.expirationDate.toISOString()),
+    expirationISO: l.expirationDate.toISOString(),
     dte: l.dte,
     side: l.side as "buy" | "sell",
     contracts: l.quantity,
     premium: l.premium,
-    impliedVol: l.impliedVol,
+    impliedVol: l.impliedVol ?? 0,
     delta: l.delta,
   }));
 
@@ -106,8 +114,8 @@ export function buildFeedPost(signal: FullyEnrichedSignal, now = new Date()): Fe
     dte,
     contracts: payload.totalContracts,
     premium: payload.totalPremium,
-    volOiRatio: (primaryLeg?.openInterest ?? 0) > 0
-      ? payload.totalContracts / primaryLeg!.openInterest
+    volOiRatio: primaryLeg?.openInterest
+      ? payload.totalContracts / primaryLeg.openInterest
       : 1,
     openInterest: primaryLeg?.openInterest ?? 0,
     impliedVol: iv,
@@ -115,9 +123,9 @@ export function buildFeedPost(signal: FullyEnrichedSignal, now = new Date()): Fe
     underlyingPrice: payload.underlyingPrice,
     totalScore: payload.totalScore,
     feedScore: ranking.feedScore,
-    noveltyScore: payload.scoreNovelty,
-    institutionalScore: insights.institutionalScore,
-    confidence: payload.confidence,
+    noveltyScore: payload.scoreNovelty ?? 0,
+    institutionalScore: insights.institutionalScore ?? 0,
+    confidence: payload.confidence ?? 0,
     unusualness: insights.unusualness,
     hasKnownCatalyst: events.hasKnownCatalyst,
     events: eventBadges,
@@ -145,7 +153,7 @@ export function buildFeedPost(signal: FullyEnrichedSignal, now = new Date()): Fe
       impliedVol: iv,
       delta,
       totalScore: payload.totalScore,
-      noveltyScore: payload.scoreNovelty,
+      noveltyScore: payload.scoreNovelty ?? 0,
       unusualness: insights.unusualness,
       hasKnownCatalyst: events.hasKnownCatalyst,
       nearestEventLabel: events.nearestEventName ?? undefined,
@@ -154,7 +162,7 @@ export function buildFeedPost(signal: FullyEnrichedSignal, now = new Date()): Fe
       primaryTheme: themes.primaryThemeName,
       activePeers: peers.activePeerSymbols,
       isCombo,
-      institutionalScore: insights.institutionalScore,
+      institutionalScore: insights.institutionalScore ?? 0,
     }),
     oneLiner: insights.oneLiner,
     detectedAt,

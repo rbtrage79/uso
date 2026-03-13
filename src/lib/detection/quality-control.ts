@@ -188,9 +188,7 @@ export function runQualityControl(
   const key = dedupKey(signal);
   const lastTs = recentSignals.get(key);
   const now = Date.now();
-  const signalTs = signal.detectedAt instanceof Date
-    ? signal.detectedAt.getTime()
-    : new Date(signal.detectedAt as string).getTime();
+  const signalTs = now;
 
   if (lastTs !== undefined && (signalTs - lastTs) < c.dedupWindowMs) {
     logger.info(LOG_EVENTS.QC_DUPLICATE, { symbol: signal.symbol, key, ageMs: signalTs - lastTs });
