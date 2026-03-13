@@ -121,7 +121,7 @@ function useQualityStats() {
         existing.count++;
         existing.totalPremium += s.totalPremium;
         existing.avgScore = Math.round((existing.avgScore + s.totalScore) / 2);
-        if (existing.direction !== s.direction) existing.direction = "mixed" as "bullish";
+        if (existing.direction !== s.direction) existing.direction = "mixed";
       } else {
         tickerMap.set(s.symbol, {
           symbol: s.symbol,
