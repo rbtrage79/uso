@@ -1,0 +1,567 @@
+import type { FeedPost } from "@/types/feed";
+
+// Sparkline presets
+const UP   = [0.40,0.42,0.41,0.44,0.46,0.45,0.48,0.50,0.49,0.52,0.54,0.53,0.56,0.58,0.57,0.60,0.62,0.61,0.65,0.68];
+const DOWN = [0.65,0.63,0.64,0.61,0.59,0.62,0.58,0.56,0.59,0.55,0.53,0.56,0.52,0.50,0.48,0.51,0.47,0.45,0.43,0.40];
+const FLAT = [0.50,0.51,0.49,0.52,0.50,0.48,0.51,0.50,0.52,0.49,0.51,0.50,0.48,0.51,0.50,0.52,0.49,0.51,0.50,0.51];
+const VDOWN= [0.55,0.52,0.56,0.50,0.48,0.53,0.47,0.50,0.45,0.43,0.46,0.49,0.44,0.41,0.44,0.40,0.43,0.38,0.41,0.37];
+const SUP  = [0.35,0.37,0.39,0.38,0.41,0.43,0.42,0.45,0.47,0.46,0.49,0.51,0.50,0.53,0.55,0.54,0.57,0.59,0.58,0.61];
+
+export const MOCK_FEED_POSTS: FeedPost[] = [
+  // ── 1. NVDA Sweep — $900C Apr16 — Bullish ───────────────────────────────
+  {
+    id: "feed-001",
+    symbol: "NVDA", companyName: "NVIDIA Corp", sector: "Information Technology", industry: "Semiconductors",
+    signalKind: "sweep", signalLabel: "Sweep", direction: "bullish", isCombo: false,
+    legs: [{ optionType: "call", strike: 900, expiration: "Apr 16", expirationISO: "2026-04-16", dte: 35, side: "buy", contracts: 4200, premium: 3240000, impliedVol: 0.72, delta: 0.41 }],
+    optionType: "call", strike: 900, expiration: "Apr 16", expirationISO: "2026-04-16", dte: 35,
+    contracts: 4200, premium: 3240000, volOiRatio: 3.2, openInterest: 1312, impliedVol: 0.72, delta: 0.41, underlyingPrice: 875,
+    totalScore: 91, feedScore: 83, noveltyScore: 48, institutionalScore: 82, confidence: 0.88, unusualness: "extreme",
+    hasKnownCatalyst: true,
+    events: [
+      { type: "fomc", label: "FOMC Rate Decision", daysAway: 6, importance: "high", beforeExpiry: true, emoji: "🏛️" },
+      { type: "earnings", label: "NVDA Earnings Q4'25", daysAway: 22, importance: "critical", beforeExpiry: true, emoji: "📊" },
+      { type: "opex", label: "Monthly OPEX (Mar)", daysAway: 8, importance: "medium", beforeExpiry: true, emoji: "⏰" },
+    ],
+    nearestEventLabel: "FOMC Rate Decision", daysToNearestEvent: 6, earningsWithinExpiry: true,
+    primaryTheme: "AI Infrastructure", primaryThemeEmoji: "🧠", primaryFactor: "Momentum", primaryFactorEmoji: "🚀",
+    activePeers: ["AMD", "META", "AMZN"], etfMembership: ["QQQ", "SMH", "SOXX"],
+    tags: ["$NVDA","30DTE","SweepLike","BullishFlow","EarningsWithinExpiry","AITheme","FedWeek","HighConviction","WhaleSize","PeerSync","IVSpike"],
+    explanations: {
+      tweetShort: "🟢 $NVDA Sweep — 4.2K calls @$900 Apr 16. $3.24M premium. 3.2x vol/OI. Score 91. Earnings in 22d. FOMC in 6d.",
+      retailPlain: "A massive bullish call sweep just hit NVIDIA at the $900 strike expiring April 16th (35 days out). Over 4,200 contracts traded for $3.24M in premium — that's 3.2× the normal open interest for this contract, meaning new money is coming in, not just traders closing positions. Earnings fall before this option expires, and with the FOMC just 6 days out, someone appears to be making a large, multi-catalyst bet on NVDA moving higher. AMD, META, and AMZN are also seeing unusual activity, suggesting this may be part of a broader AI/tech bull thesis.",
+      traderPro: "Aggressive sweep in NVDA $900C Apr 16 (35 DTE), 4,200 contracts for $3.24M notional (~$7.71/contract). Vol/OI: 3.2×. IV: 72%. δ0.41. Near-ATM; not speculative OTM. Score: 91/100 (extreme). Institutional fingerprint — large premium, near-ATM strike, multi-exchange sweep execution. Earnings within expiry (22d out). FOMC in 6d acts as near-term catalyst. Three peers (AMD, META, AMZN) showing concurrent bullish flow — coordinated theme rotation likely. Watch for follow-through prints above $920.",
+    },
+    oneLiner: "🟢 NVDA SWEEP — $3.24M | Earnings 22d | FOMC 6d | AI cluster active",
+    detectedAt: "2026-03-12T20:26:00Z", timeAgo: "4 min ago",
+    sparklineData: UP, sparklineTrend: "up",
+  },
+
+  // ── 2. NVDA Block — $950C May16 ─────────────────────────────────────────
+  {
+    id: "feed-002",
+    symbol: "NVDA", companyName: "NVIDIA Corp", sector: "Information Technology", industry: "Semiconductors",
+    signalKind: "block", signalLabel: "Block", direction: "bullish", isCombo: false,
+    legs: [{ optionType: "call", strike: 950, expiration: "May 16", expirationISO: "2026-05-16", dte: 65, side: "buy", contracts: 2800, premium: 2100000, impliedVol: 0.68, delta: 0.35 }],
+    optionType: "call", strike: 950, expiration: "May 16", expirationISO: "2026-05-16", dte: 65,
+    contracts: 2800, premium: 2100000, volOiRatio: 2.4, openInterest: 1166, impliedVol: 0.68, delta: 0.35, underlyingPrice: 875,
+    totalScore: 84, feedScore: 77, noveltyScore: 52, institutionalScore: 85, confidence: 0.81, unusualness: "unusual",
+    hasKnownCatalyst: true,
+    events: [
+      { type: "earnings", label: "NVDA Earnings Q4'25", daysAway: 22, importance: "critical", beforeExpiry: true, emoji: "📊" },
+      { type: "fomc", label: "FOMC (May)", daysAway: 55, importance: "high", beforeExpiry: true, emoji: "🏛️" },
+    ],
+    nearestEventLabel: "NVDA Earnings Q4'25", daysToNearestEvent: 22, earningsWithinExpiry: true,
+    primaryTheme: "AI Infrastructure", primaryThemeEmoji: "🧠", primaryFactor: "Momentum", primaryFactorEmoji: "🚀",
+    activePeers: ["AMD", "AMZN"], etfMembership: ["QQQ", "SMH"],
+    tags: ["$NVDA","60DTE","BlockTrade","BullishFlow","EarningsWithinExpiry","AITheme","PeerSync","HighConviction","WhaleSize"],
+    explanations: {
+      tweetShort: "🟢 $NVDA Block — 2.8K calls @$950 May 16. $2.1M premium. 2.4x vol/OI. Score 84. Earnings + FOMC within expiry.",
+      retailPlain: "A large institutional block just appeared in NVIDIA's May 16 $950 calls — 2,800 contracts for $2.1M in total premium. This 65-day option captures both the upcoming earnings report (22 days away) and the May FOMC meeting, suggesting a patient, multi-catalyst bet rather than a short-term gamble. The $950 strike is moderately out of the money, indicating this trader expects a meaningful move higher. AMD and AMZN are also seeing concurrent bullish activity in the AI space.",
+      traderPro: "Single-print block in NVDA $950C May 16 (65 DTE), 2,800 contracts for $2.1M notional (~$7.50/contract). Vol/OI: 2.4×. IV: 68%. δ0.35. OTM positioning (~8.6% above spot $875). Score: 84/100. Institutional sizing — block execution suggests single counterparty. Dual catalyst: earnings 22d, FOMC 55d (both within expiry). Moderate IV vs historical suggests vol isn't pumped. Patient positioning; delta suggests ~35% probability of profit at expiry. Peers AMD, AMZN in concurrent bullish flow.",
+    },
+    oneLiner: "🟢 NVDA BLOCK — $2.1M | Earnings + FOMC within expiry | 65DTE",
+    detectedAt: "2026-03-12T20:16:00Z", timeAgo: "14 min ago",
+    sparklineData: SUP, sparklineTrend: "up",
+  },
+
+  // ── 3. TSLA Block — $220P Apr2 — Bearish ────────────────────────────────
+  {
+    id: "feed-003",
+    symbol: "TSLA", companyName: "Tesla Inc", sector: "Consumer Discretionary", industry: "Automobile Manufacturers",
+    signalKind: "block", signalLabel: "Block", direction: "bearish", isCombo: false,
+    legs: [{ optionType: "put", strike: 220, expiration: "Apr 2", expirationISO: "2026-04-02", dte: 21, side: "buy", contracts: 2000, premium: 1850000, impliedVol: 0.88, delta: -0.42 }],
+    optionType: "put", strike: 220, expiration: "Apr 2", expirationISO: "2026-04-02", dte: 21,
+    contracts: 2000, premium: 1850000, volOiRatio: 4.1, openInterest: 487, impliedVol: 0.88, delta: -0.42, underlyingPrice: 233,
+    totalScore: 78, feedScore: 71, noveltyScore: 65, institutionalScore: 85, confidence: 0.76, unusualness: "unusual",
+    hasKnownCatalyst: true,
+    events: [
+      { type: "fomc", label: "FOMC Rate Decision", daysAway: 6, importance: "high", beforeExpiry: true, emoji: "🏛️" },
+    ],
+    nearestEventLabel: "FOMC Rate Decision", daysToNearestEvent: 6, earningsWithinExpiry: false,
+    primaryTheme: "Mega-Cap Tech", primaryThemeEmoji: "🏔️", primaryFactor: "High Beta / Speculative", primaryFactorEmoji: "⚡",
+    activePeers: ["NVDA", "META"], etfMembership: ["QQQ"],
+    tags: ["$TSLA","30DTE","BlockTrade","BearishHedge","IVSpike","FedWeek","PeerSync","VolOISpike"],
+    explanations: {
+      tweetShort: "🔴 $TSLA Block — 2K puts @$220 Apr 2. $1.85M premium. 4.1x vol/OI. Score 78. IV 88%. FOMC in 6d.",
+      retailPlain: "A large bearish put block hit Tesla at the $220 strike expiring April 2nd (21 days out). 2,000 contracts for $1.85M — with 88% implied volatility, these options are extremely expensive, yet someone is still paying up. The 4.1× vol/OI ratio means the vast majority of this is new positioning, not a hedge on existing long stock. With FOMC in 6 days and Tesla's close ties to macro sentiment and Elon Musk news flow, this looks like an institutional hedge against a 'risk-off' FOMC outcome.",
+      traderPro: "Block put in TSLA $220P Apr 2 (21 DTE), 2,000 contracts for $1.85M notional (~$9.25/contract). Vol/OI: 4.1×. IV: 88%. δ-0.42. Near-ATM put with spot at $233 — $220 strike is ~5.6% OTM. Score: 78/100. Institutional fingerprint (85/100). High novelty (65) — unusual for this contract. IV at 88% is elevated vs 30-day historical ~65%; vol buyer thesis. Short DTE (21d) captures FOMC. Watch for institutional follow-through or complementary call selling.",
+    },
+    oneLiner: "🔴 TSLA BLOCK — $1.85M put | 4.1x vol/OI | FOMC hedge | IV 88%",
+    detectedAt: "2026-03-12T20:04:00Z", timeAgo: "26 min ago",
+    sparklineData: VDOWN, sparklineTrend: "down",
+  },
+
+  // ── 4. TSLA Sweep — $260C Mar21 — Bullish / Short Squeeze ───────────────
+  {
+    id: "feed-004",
+    symbol: "TSLA", companyName: "Tesla Inc", sector: "Consumer Discretionary", industry: "Automobile Manufacturers",
+    signalKind: "sweep", signalLabel: "Sweep", direction: "bullish", isCombo: false,
+    legs: [{ optionType: "call", strike: 260, expiration: "Mar 21", expirationISO: "2026-03-21", dte: 9, side: "buy", contracts: 3500, premium: 1200000, impliedVol: 0.94, delta: 0.28 }],
+    optionType: "call", strike: 260, expiration: "Mar 21", expirationISO: "2026-03-21", dte: 9,
+    contracts: 3500, premium: 1200000, volOiRatio: 6.8, openInterest: 514, impliedVol: 0.94, delta: 0.28, underlyingPrice: 233,
+    totalScore: 75, feedScore: 68, noveltyScore: 72, institutionalScore: 58, confidence: 0.70, unusualness: "unusual",
+    hasKnownCatalyst: true,
+    events: [
+      { type: "opex", label: "Quarterly Witching OPEX", daysAway: 8, importance: "high", beforeExpiry: true, emoji: "⏰" },
+      { type: "fomc", label: "FOMC Rate Decision", daysAway: 6, importance: "high", beforeExpiry: false, emoji: "🏛️" },
+    ],
+    nearestEventLabel: "FOMC Rate Decision", daysToNearestEvent: 6, earningsWithinExpiry: false,
+    primaryTheme: "Mega-Cap Tech", primaryThemeEmoji: "🏔️", primaryFactor: "Short Interest / Squeeze-Prone", primaryFactorEmoji: "🔥",
+    activePeers: [], etfMembership: ["QQQ"],
+    tags: ["$TSLA","0-7DTE","SweepLike","BullishFlow","IVSpike","OPEXWeek","VolOISpike","NoKnownCatalyst","FactorRotation"],
+    explanations: {
+      tweetShort: "🟢 $TSLA Sweep — 3.5K calls @$260 Mar 21. $1.2M. 6.8x vol/OI. Score 75. IV 94%. OTM 11.6%. Squeeze setup?",
+      retailPlain: "A high-risk bullish call sweep hit Tesla at the $260 strike expiring March 21st — just 9 days away. The strike is 11.6% out of the money, meaning Tesla would need to rally significantly in under two weeks. With 94% implied volatility and a 6.8× vol-to-OI ratio, these are expensive lottery tickets — the kind of bet often associated with a short-squeeze setup given Tesla's elevated short interest. The quarterly OPEX in 8 days could add fuel if dealers need to delta hedge. High novelty score (72) means this pattern hasn't been seen recently.",
+      traderPro: "OTM call sweep in TSLA $260C Mar 21 (9 DTE), 3,500 contracts for $1.2M (~$3.43/contract). Vol/OI: 6.8×. IV: 94%. δ0.28. Strike 11.6% OTM (spot $233). Score: 75/100. Short DTE + OTM = high gamma exposure. Retail-leaning size (58/100 institutional). High novelty (72) — not a recurring pattern. Quarterly OPEX in 8d creates gamma squeeze potential. TSLA's elevated short interest (factor: Short Squeeze) makes this a potential squeeze catalyst if any positive catalyst emerges. Low probability / high reward structure.",
+    },
+    oneLiner: "🟢 TSLA SWEEP — $1.2M | OTM calls 9DTE | Short squeeze setup | IV 94%",
+    detectedAt: "2026-03-12T19:51:00Z", timeAgo: "39 min ago",
+    sparklineData: DOWN, sparklineTrend: "down",
+  },
+
+  // ── 5. SMCI Repeat Sweep — $50C Apr17 — Bullish ─────────────────────────
+  {
+    id: "feed-005",
+    symbol: "SMCI", companyName: "Super Micro Computer", sector: "Information Technology", industry: "Computer Hardware",
+    signalKind: "repeat_sweep", signalLabel: "Repeat Sweep", direction: "bullish", isCombo: false,
+    legs: [{ optionType: "call", strike: 50, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36, side: "buy", contracts: 5000, premium: 890000, impliedVol: 1.05, delta: 0.38 }],
+    optionType: "call", strike: 50, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36,
+    contracts: 5000, premium: 890000, volOiRatio: 5.2, openInterest: 961, impliedVol: 1.05, delta: 0.38, underlyingPrice: 48,
+    totalScore: 82, feedScore: 74, noveltyScore: 58, institutionalScore: 72, confidence: 0.77, unusualness: "extreme",
+    hasKnownCatalyst: false,
+    events: [
+      { type: "fomc", label: "FOMC Rate Decision", daysAway: 6, importance: "high", beforeExpiry: true, emoji: "🏛️" },
+    ],
+    nearestEventLabel: "FOMC Rate Decision", daysToNearestEvent: 6, earningsWithinExpiry: false,
+    primaryTheme: "AI Infrastructure", primaryThemeEmoji: "🧠", primaryFactor: "High Beta / Speculative", primaryFactorEmoji: "⚡",
+    activePeers: ["NVDA"], etfMembership: [],
+    tags: ["$SMCI","30DTE","RepeatSweep","SweepLike","BullishFlow","AITheme","IVSpike","WhaleSize","VolOISpike","FedWeek","NoKnownCatalyst","HighConviction"],
+    explanations: {
+      tweetShort: "🟢 $SMCI Repeat Sweep — 5K calls @$50 Apr 17. $890K. 5.2x vol/OI. IV 105%. Same strike hit 3x today. Score 82.",
+      retailPlain: "Super Micro Computer has seen the same $50 April call sweep hit the tape three times today — a pattern known as a 'repeat sweep' that often signals accumulation rather than a one-off trade. 5,000 total contracts for $890K in premium, with an extraordinary 105% implied volatility. SMCI has been volatile following accounting concerns, and this kind of persistent buying into fear suggests someone believes the worst is priced in and a recovery catalyst is coming — possibly related to NVDA's AI server demand which SMCI is a key supplier for.",
+      traderPro: "Repeat sweep pattern in SMCI $50C Apr 17 (36 DTE), 5,000 total contracts across 3 prints for $890K (~$1.78/contract). Vol/OI: 5.2×. IV: 105%. δ0.38. Spot ~$48, strike $50 is ~4.2% OTM. Score: 82/100 (extreme). No confirmed near-term catalyst. High novelty (58). Repeat execution pattern suggests systematic accumulation, not single-counterparty block. IV at 105% reflects ongoing volatility concerns (SMCI accounting issues). Watch for SEC/earnings announcement as potential catalyst. NVDA supply chain read-through possible.",
+    },
+    oneLiner: "🟢 SMCI REPEAT SWEEP — $890K | Same strike hit 3x today | IV 105% | No known catalyst",
+    detectedAt: "2026-03-12T19:38:00Z", timeAgo: "52 min ago",
+    sparklineData: SUP, sparklineTrend: "up",
+    mergedCount: 3,
+    mergedPrints: [
+      { timeAgo: "1h 8m ago", contracts: 1500, premium: 267000 },
+      { timeAgo: "58m ago",   contracts: 2000, premium: 356000 },
+    ],
+  },
+
+  // ── 6. SMCI Block — $45P Mar21 — Bearish ────────────────────────────────
+  {
+    id: "feed-006",
+    symbol: "SMCI", companyName: "Super Micro Computer", sector: "Information Technology", industry: "Computer Hardware",
+    signalKind: "block", signalLabel: "Block", direction: "bearish", isCombo: false,
+    legs: [{ optionType: "put", strike: 45, expiration: "Mar 21", expirationISO: "2026-03-21", dte: 9, side: "buy", contracts: 1500, premium: 450000, impliedVol: 1.12, delta: -0.35 }],
+    optionType: "put", strike: 45, expiration: "Mar 21", expirationISO: "2026-03-21", dte: 9,
+    contracts: 1500, premium: 450000, volOiRatio: 3.8, openInterest: 394, impliedVol: 1.12, delta: -0.35, underlyingPrice: 48,
+    totalScore: 67, feedScore: 61, noveltyScore: 45, institutionalScore: 70, confidence: 0.65, unusualness: "noteworthy",
+    hasKnownCatalyst: true,
+    events: [
+      { type: "opex", label: "Quarterly Witching OPEX", daysAway: 8, importance: "high", beforeExpiry: true, emoji: "⏰" },
+    ],
+    nearestEventLabel: "Quarterly Witching OPEX", daysToNearestEvent: 8, earningsWithinExpiry: false,
+    primaryTheme: "AI Infrastructure", primaryThemeEmoji: "🧠", primaryFactor: "Short Interest / Squeeze-Prone", primaryFactorEmoji: "🔥",
+    activePeers: [], etfMembership: [],
+    tags: ["$SMCI","0-7DTE","BlockTrade","BearishHedge","IVSpike","OPEXWeek"],
+    explanations: {
+      tweetShort: "🔴 $SMCI Block — 1.5K puts @$45 Mar 21. $450K. IV 112%. 9DTE. Bearish OPEX hedge.",
+      retailPlain: "A bearish put block hit Super Micro Computer at the $45 strike expiring in just 9 days. With spot prices around $48, these are slightly out-of-the-money puts — likely a hedge against a sharp drop heading into quarterly OPEX. The 112% implied volatility is extraordinary, but SMCI's accounting issues have kept volatility elevated. This appears to be a counterweight to the bullish repeat sweeps seen earlier today, suggesting mixed signals around SMCI's near-term direction.",
+      traderPro: "Block put in SMCI $45P Mar 21 (9 DTE), 1,500 contracts for $450K (~$3.00/contract). Vol/OI: 3.8×. IV: 112%. δ-0.35. Spot $48, strike $45 is 6.2% OTM. Score: 67/100. Potential OPEX hedging or directional short. Short DTE — gamma-heavy position. Contrast with bullish $50C repeat sweeps seen today — creates an ambiguous short-term picture. IV 112% — exceptional; selling into this has premium benefit but model risk. Watch for confirmation prints below $47.",
+    },
+    oneLiner: "🔴 SMCI BLOCK — $450K | 9DTE put | IV 112% | Bearish OPEX hedge",
+    detectedAt: "2026-03-12T19:24:00Z", timeAgo: "1h 6m ago",
+    sparklineData: VDOWN, sparklineTrend: "down",
+  },
+
+  // ── 7. PLTR Sweep — $110C Apr17 — Bullish ───────────────────────────────
+  {
+    id: "feed-007",
+    symbol: "PLTR", companyName: "Palantir Technologies", sector: "Information Technology", industry: "Data Processing & Outsourced Services",
+    signalKind: "sweep", signalLabel: "Sweep", direction: "bullish", isCombo: false,
+    legs: [{ optionType: "call", strike: 110, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36, side: "buy", contracts: 3200, premium: 1400000, impliedVol: 0.78, delta: 0.44 }],
+    optionType: "call", strike: 110, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36,
+    contracts: 3200, premium: 1400000, volOiRatio: 2.9, openInterest: 1103, impliedVol: 0.78, delta: 0.44, underlyingPrice: 107,
+    totalScore: 79, feedScore: 73, noveltyScore: 54, institutionalScore: 76, confidence: 0.74, unusualness: "unusual",
+    hasKnownCatalyst: true,
+    events: [
+      { type: "fomc", label: "FOMC Rate Decision", daysAway: 6, importance: "high", beforeExpiry: true, emoji: "🏛️" },
+    ],
+    nearestEventLabel: "FOMC Rate Decision", daysToNearestEvent: 6, earningsWithinExpiry: false,
+    primaryTheme: "AI Infrastructure", primaryThemeEmoji: "🧠", primaryFactor: "Momentum", primaryFactorEmoji: "🚀",
+    activePeers: ["NVDA", "META"], etfMembership: [],
+    tags: ["$PLTR","30DTE","SweepLike","BullishFlow","AITheme","FedWeek","PeerSync","FactorRotation"],
+    explanations: {
+      tweetShort: "🟢 $PLTR Sweep — 3.2K calls @$110 Apr 17. $1.4M. 2.9x vol/OI. Score 79. Near ATM. FOMC in 6d.",
+      retailPlain: "A notable bullish call sweep hit Palantir at the $110 strike expiring April 17th. With the stock trading near $107, this is essentially an at-the-money bet — meaning traders expect Palantir to be above $110 in 36 days. The $1.4M in premium is meaningful for a company Palantir's size. Palantir has been one of the biggest beneficiaries of AI government spending, and with the FOMC in 6 days and NVDA and META also seeing concurrent bullish flow, this looks like part of a broader AI sector bet.",
+      traderPro: "Sweep in PLTR $110C Apr 17 (36 DTE), 3,200 contracts for $1.4M (~$4.38/contract). Vol/OI: 2.9×. IV: 78%. δ0.44. Near-ATM (spot $107). Score: 79/100. Institutional sizing (76/100). FOMC in 6d. AI Infrastructure theme — PLTR benefits from government AI contract expansion. Peers NVDA, META in concurrent bullish flow. Momentum factor active. Moderate novelty (54). Defense/AI overlap gives dual narrative (AIP government spend + commercial). Break above $110 would confirm bull thesis.",
+    },
+    oneLiner: "🟢 PLTR SWEEP — $1.4M | Near ATM | AI/Defense theme | FOMC 6d",
+    detectedAt: "2026-03-12T19:11:00Z", timeAgo: "1h 19m ago",
+    sparklineData: UP, sparklineTrend: "up",
+  },
+
+  // ── 8. PLTR Combo — Bull Spread $100C/$120C Apr17 ────────────────────────
+  {
+    id: "feed-008",
+    symbol: "PLTR", companyName: "Palantir Technologies", sector: "Information Technology", industry: "Data Processing & Outsourced Services",
+    signalKind: "combo", signalLabel: "Combo", direction: "bullish", isCombo: true,
+    legs: [
+      { optionType: "call", strike: 100, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36, side: "buy",  contracts: 2000, premium: 560000, impliedVol: 0.82, delta: 0.61 },
+      { optionType: "call", strike: 120, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36, side: "sell", contracts: 2000, premium: 120000, impliedVol: 0.74, delta: 0.28 },
+    ],
+    optionType: "call", strike: 100, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36,
+    contracts: 2000, premium: 680000, volOiRatio: 2.1, openInterest: 952, impliedVol: 0.82, delta: 0.61, underlyingPrice: 107,
+    totalScore: 71, feedScore: 64, noveltyScore: 48, institutionalScore: 88, confidence: 0.72, unusualness: "noteworthy",
+    hasKnownCatalyst: true,
+    events: [
+      { type: "fomc", label: "FOMC Rate Decision", daysAway: 6, importance: "high", beforeExpiry: true, emoji: "🏛️" },
+    ],
+    nearestEventLabel: "FOMC Rate Decision", daysToNearestEvent: 6, earningsWithinExpiry: false,
+    primaryTheme: "AI Infrastructure", primaryThemeEmoji: "🧠",
+    activePeers: [], etfMembership: [],
+    tags: ["$PLTR","30DTE","ComboTrade","BullishFlow","AITheme","FedWeek"],
+    explanations: {
+      tweetShort: "🟢 $PLTR Bull Spread — Buy $100C / Sell $120C Apr 17. $680K net debit. Score 71. Defined-risk bullish bet.",
+      retailPlain: "An institutional trader put on a bull call spread in Palantir, buying the $100 calls and selling the $120 calls for April 17th. This 'combo' structure limits both the upside and the cost — the maximum gain is capped at $120, but the net cost is only $680K vs $1.1M for straight calls. This is a disciplined, institutional-style trade that says 'I'm bullish on PLTR but I want defined risk.' The $100-$120 target zone implies an expectation of a 7-12% rally from current levels.",
+      traderPro: "Bull call spread in PLTR Apr 17 (36 DTE): long $100C / short $120C, 2,000 contracts, $680K net debit ($3.40/spread). Max gain: $20/spread ($4M gross at expiry). Max loss: $3.40/spread ($680K). Breakeven: ~$103.40. IV spread: buy 82%, sell 74% — slight IV edge. δnet ≈ +0.33. Score: 71/100. High institutional score (88) — defined-risk combos are a classic institutional hedge/directional structure. More conservative than straight calls — implies measured bullish conviction, not aggressive speculation.",
+    },
+    oneLiner: "🟢 PLTR COMBO — $680K bull spread | $100C/$120C | Defined-risk institutional bet",
+    detectedAt: "2026-03-12T18:58:00Z", timeAgo: "1h 32m ago",
+    sparklineData: FLAT, sparklineTrend: "flat",
+  },
+
+  // ── 9. MRVL Block — $70C Apr17 — Bullish ────────────────────────────────
+  {
+    id: "feed-009",
+    symbol: "MRVL", companyName: "Marvell Technology", sector: "Information Technology", industry: "Semiconductors",
+    signalKind: "block", signalLabel: "Block", direction: "bullish", isCombo: false,
+    legs: [{ optionType: "call", strike: 70, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36, side: "buy", contracts: 2500, premium: 780000, impliedVol: 0.66, delta: 0.45 }],
+    optionType: "call", strike: 70, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36,
+    contracts: 2500, premium: 780000, volOiRatio: 2.6, openInterest: 961, impliedVol: 0.66, delta: 0.45, underlyingPrice: 69,
+    totalScore: 74, feedScore: 67, noveltyScore: 60, institutionalScore: 80, confidence: 0.73, unusualness: "unusual",
+    hasKnownCatalyst: true,
+    events: [
+      { type: "fomc", label: "FOMC Rate Decision", daysAway: 6, importance: "high", beforeExpiry: true, emoji: "🏛️" },
+    ],
+    nearestEventLabel: "FOMC Rate Decision", daysToNearestEvent: 6, earningsWithinExpiry: false,
+    primaryTheme: "Semiconductors", primaryThemeEmoji: "⚡", primaryFactor: "Momentum", primaryFactorEmoji: "🚀",
+    activePeers: ["NVDA", "AMD"], etfMembership: ["SMH", "SOXX"],
+    tags: ["$MRVL","30DTE","BlockTrade","BullishFlow","SemiPlay","FedWeek","PeerSync","FactorRotation"],
+    explanations: {
+      tweetShort: "🟢 $MRVL Block — 2.5K calls @$70 Apr 17. $780K. 2.6x vol/OI. Score 74. ATM. Semis theme + NVDA peer sync.",
+      retailPlain: "A clean institutional block appeared in Marvell Technology at the $70 April call — just $1 out of the money with the stock near $69. Marvell has been one of the quieter AI infrastructure winners, making custom AI chips (ASICs) for hyperscalers like Amazon and Google. With NVDA and AMD also seeing bullish flow, this looks like a sector-wide AI semiconductor thesis playing out. The FOMC in 6 days could be the near-term catalyst if the Fed signals a dovish stance.",
+      traderPro: "Block in MRVL $70C Apr 17 (36 DTE), 2,500 contracts for $780K (~$3.12/contract). Vol/OI: 2.6×. IV: 66%. δ0.45. Near-ATM (spot $69). Score: 74/100. Institutional (80/100). MRVL custom ASIC thesis — direct beneficiary of hyperscaler AI capex bypassing NVDA. Semis cluster active: NVDA, AMD in concurrent bullish flow. Low IV (66%) relative to semis peers — vol not elevated, pure directional bet. FOMC in 6d. SMH/SOXX ETF exposure creates potential for ETF-driven price action.",
+    },
+    oneLiner: "🟢 MRVL BLOCK — $780K | Near ATM | AI ASIC semis play | Peer sync NVDA+AMD",
+    detectedAt: "2026-03-12T18:44:00Z", timeAgo: "1h 46m ago",
+    sparklineData: SUP, sparklineTrend: "up",
+  },
+
+  // ── 10. MRVL Sweep — $75C May15 — Bullish / No known catalyst ────────────
+  {
+    id: "feed-010",
+    symbol: "MRVL", companyName: "Marvell Technology", sector: "Information Technology", industry: "Semiconductors",
+    signalKind: "sweep", signalLabel: "Sweep", direction: "bullish", isCombo: false,
+    legs: [{ optionType: "call", strike: 75, expiration: "May 15", expirationISO: "2026-05-15", dte: 64, side: "buy", contracts: 1800, premium: 540000, impliedVol: 0.62, delta: 0.32 }],
+    optionType: "call", strike: 75, expiration: "May 15", expirationISO: "2026-05-15", dte: 64,
+    contracts: 1800, premium: 540000, volOiRatio: 4.5, openInterest: 400, impliedVol: 0.62, delta: 0.32, underlyingPrice: 69,
+    totalScore: 69, feedScore: 62, noveltyScore: 74, institutionalScore: 65, confidence: 0.67, unusualness: "unusual",
+    hasKnownCatalyst: false,
+    events: [],
+    earningsWithinExpiry: false,
+    primaryTheme: "Semiconductors", primaryThemeEmoji: "⚡",
+    activePeers: [], etfMembership: ["SMH"],
+    tags: ["$MRVL","60DTE","SweepLike","BullishFlow","SemiPlay","NoKnownCatalyst","VolOISpike"],
+    explanations: {
+      tweetShort: "🟢 $MRVL Sweep — 1.8K calls @$75 May 15. $540K. 4.5x vol/OI. Score 69. No known catalyst. Novelty 74.",
+      retailPlain: "A bullish call sweep in Marvell Technology stands out for one specific reason: there's no obvious upcoming catalyst to explain it. No earnings, no FDA event, no big macro print in the next 64 days that would directly impact this name. When unusual flow appears without a known reason, it can sometimes indicate traders with non-public information, or simply a thesis bet on AI chip demand ahead of any formal announcement. The 4.5× vol-to-OI ratio is very high for a 64-day option — someone is building a fresh position.",
+      traderPro: "Sweep in MRVL $75C May 15 (64 DTE), 1,800 contracts for $540K (~$3.00/contract). Vol/OI: 4.5×. IV: 62%. δ0.32. OTM ~8.7% (spot $69). Score: 69/100. High novelty (74) — stands out as pattern anomaly. No known catalyst. Moderate institutional score (65). Long-dated OTM sweep without catalyst is a flag for potential information asymmetry or early positioning ahead of an unannounced event. MRVL has custom ASIC partnerships (Amazon Annapurna, Google TPU adjacency) — potential partnership announcement or earnings guidance pre-announcement risk.",
+    },
+    oneLiner: "🟢 MRVL SWEEP — $540K | 64DTE OTM | No known catalyst | Novelty spike 74",
+    detectedAt: "2026-03-12T18:30:00Z", timeAgo: "2h ago",
+    sparklineData: FLAT, sparklineTrend: "flat",
+  },
+
+  // ── 11. SNOW Block — $130P Apr17 — Bearish ──────────────────────────────
+  {
+    id: "feed-011",
+    symbol: "SNOW", companyName: "Snowflake Inc", sector: "Information Technology", industry: "Systems Software",
+    signalKind: "block", signalLabel: "Block", direction: "bearish", isCombo: false,
+    legs: [{ optionType: "put", strike: 130, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36, side: "buy", contracts: 1200, premium: 620000, impliedVol: 0.75, delta: -0.40 }],
+    optionType: "put", strike: 130, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36,
+    contracts: 1200, premium: 620000, volOiRatio: 3.1, openInterest: 387, impliedVol: 0.75, delta: -0.40, underlyingPrice: 138,
+    totalScore: 72, feedScore: 65, noveltyScore: 56, institutionalScore: 78, confidence: 0.70, unusualness: "unusual",
+    hasKnownCatalyst: true,
+    events: [
+      { type: "fomc", label: "FOMC Rate Decision", daysAway: 6, importance: "high", beforeExpiry: true, emoji: "🏛️" },
+    ],
+    nearestEventLabel: "FOMC Rate Decision", daysToNearestEvent: 6, earningsWithinExpiry: false,
+    primaryTheme: "SaaS / Cloud", primaryThemeEmoji: "☁️",
+    activePeers: [], etfMembership: ["QQQ"],
+    tags: ["$SNOW","30DTE","BlockTrade","BearishHedge","SaaSTheme","FedWeek"],
+    explanations: {
+      tweetShort: "🔴 $SNOW Block — 1.2K puts @$130 Apr 17. $620K. 3.1x vol/OI. Score 72. SaaS bearish. FOMC in 6d.",
+      retailPlain: "A bearish put block appeared in Snowflake at the $130 strike for April 17th. With the stock trading around $138, this put is about 5.8% out of the money — a protective hedge or directional short bet. Snowflake has seen slowing revenue growth and faces competitive pressure from cloud providers building their own data warehousing. With the FOMC in 6 days and high-growth SaaS names sensitive to interest rate signals, this could be a pre-FOMC hedge against a hawkish outcome.",
+      traderPro: "Block put in SNOW $130P Apr 17 (36 DTE), 1,200 contracts for $620K (~$5.17/contract). Vol/OI: 3.1×. IV: 75%. δ-0.40. Spot $138, strike $130 is 5.8% OTM. Score: 72/100. Rate-sensitive SaaS — SNOW is among the first names to sell off on higher-for-longer FOMC signals. Institutional fingerprint (78/100). Pre-FOMC put protection is a classic institutional risk-management move. Not positioned for a catastrophic drop — more of a tail hedge than a directional short.",
+    },
+    oneLiner: "🔴 SNOW BLOCK — $620K | Put hedge | SaaS rate sensitivity | FOMC 6d",
+    detectedAt: "2026-03-12T18:15:00Z", timeAgo: "2h 15m ago",
+    sparklineData: DOWN, sparklineTrend: "down",
+  },
+
+  // ── 12. SNOW Straddle — $140 Apr17 — Neutral ────────────────────────────
+  {
+    id: "feed-012",
+    symbol: "SNOW", companyName: "Snowflake Inc", sector: "Information Technology", industry: "Systems Software",
+    signalKind: "combo", signalLabel: "Straddle", direction: "neutral", isCombo: true,
+    legs: [
+      { optionType: "call", strike: 140, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36, side: "buy", contracts: 800, premium: 290000, impliedVol: 0.74, delta: 0.48 },
+      { optionType: "put",  strike: 140, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36, side: "buy", contracts: 800, premium: 290000, impliedVol: 0.76, delta: -0.52 },
+    ],
+    optionType: "mixed", strike: 140, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36,
+    contracts: 1600, premium: 580000, volOiRatio: 2.4, openInterest: 666, impliedVol: 0.75, underlyingPrice: 138,
+    totalScore: 66, feedScore: 59, noveltyScore: 62, institutionalScore: 82, confidence: 0.68, unusualness: "noteworthy",
+    hasKnownCatalyst: true,
+    events: [
+      { type: "fomc", label: "FOMC Rate Decision", daysAway: 6, importance: "high", beforeExpiry: true, emoji: "🏛️" },
+    ],
+    nearestEventLabel: "FOMC Rate Decision", daysToNearestEvent: 6, earningsWithinExpiry: false,
+    primaryTheme: "SaaS / Cloud", primaryThemeEmoji: "☁️",
+    activePeers: [], etfMembership: [],
+    tags: ["$SNOW","30DTE","ComboTrade","SaaSTheme","FedWeek","LunchHourPrint"],
+    explanations: {
+      tweetShort: "🟡 $SNOW Straddle — $140 strike Apr 17. $580K. Expects big move, direction unknown. FOMC 6d. Score 66.",
+      retailPlain: "A straddle was placed on Snowflake at the $140 strike for April 17th — buying both a call and a put at the same strike. This is a bet that SNOW will make a big move in either direction, but the trader doesn't know (or care) which way. With the FOMC in 6 days, this kind of 'direction-neutral' bet suggests the trader expects the Fed meeting to cause significant volatility in rate-sensitive growth stocks like SNOW, but isn't sure whether it'll be good or bad news.",
+      traderPro: "Long straddle in SNOW $140 strike Apr 17 (36 DTE): buy $140C + buy $140P, 800 contracts each, $580K net debit ($7.25/straddle). Breakeven: ~$132.75 (down) / $147.25 (up). Implied move: ±5.25% at expiry. IV: 74-76%. δ≈0 (delta-neutral). Score: 66/100. High institutional score (82) — straddle buyers are typically sophisticated. Profitable if SNOW moves >5.25% either direction by Apr 17. Pre-FOMC vol bet — FOMC creates SaaS rate sensitivity binary. IV at 74-76% is elevated; straddle buyer needs a vol realization event to profit.",
+    },
+    oneLiner: "🟡 SNOW STRADDLE — $580K | Direction-neutral | Vol bet ahead of FOMC",
+    detectedAt: "2026-03-12T18:00:00Z", timeAgo: "2h 30m ago",
+    sparklineData: FLAT, sparklineTrend: "flat",
+  },
+
+  // ── 13. CRWD Sweep — $380C Apr17 — Bullish ──────────────────────────────
+  {
+    id: "feed-013",
+    symbol: "CRWD", companyName: "CrowdStrike Holdings", sector: "Information Technology", industry: "Systems Software",
+    signalKind: "sweep", signalLabel: "Sweep", direction: "bullish", isCombo: false,
+    legs: [{ optionType: "call", strike: 380, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36, side: "buy", contracts: 1500, premium: 920000, impliedVol: 0.58, delta: 0.46 }],
+    optionType: "call", strike: 380, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36,
+    contracts: 1500, premium: 920000, volOiRatio: 2.8, openInterest: 535, impliedVol: 0.58, delta: 0.46, underlyingPrice: 375,
+    totalScore: 77, feedScore: 70, noveltyScore: 52, institutionalScore: 76, confidence: 0.75, unusualness: "unusual",
+    hasKnownCatalyst: true,
+    events: [
+      { type: "fomc", label: "FOMC Rate Decision", daysAway: 6, importance: "high", beforeExpiry: true, emoji: "🏛️" },
+    ],
+    nearestEventLabel: "FOMC Rate Decision", daysToNearestEvent: 6, earningsWithinExpiry: false,
+    primaryTheme: "Defense & Cyber", primaryThemeEmoji: "🛡️", primaryFactor: "Growth", primaryFactorEmoji: "🌱",
+    activePeers: [], etfMembership: ["QQQ"],
+    tags: ["$CRWD","30DTE","SweepLike","BullishFlow","DefensePlay","FedWeek","FactorRotation"],
+    explanations: {
+      tweetShort: "🟢 $CRWD Sweep — 1.5K calls @$380 Apr 17. $920K. 2.8x vol/OI. Score 77. Cyber + defense theme. Near ATM.",
+      retailPlain: "A bullish call sweep appeared in CrowdStrike at the $380 strike for April 17th, with the stock trading near $375. CrowdStrike has recovered from its July 2024 outage and is again seeing strong enterprise demand for its AI-native cybersecurity platform. The defense/cyber theme has been active on geopolitical tensions, and with government spending on cybersecurity at record levels, this looks like a thesis bet on continued recovery and growth. FOMC in 6 days provides the macro backdrop.",
+      traderPro: "Sweep in CRWD $380C Apr 17 (36 DTE), 1,500 contracts for $920K (~$6.13/contract). Vol/OI: 2.8×. IV: 58%. δ0.46. Near-ATM (spot $375). Score: 77/100. Low IV (58%) for a growth tech name — vol not elevated, suggesting this is a conviction directional trade, not a vol play. Defense/Cyber theme active. CRWD post-outage recovery thesis intact with ARR growth reacceleration. FOMC in 6d — lower rates benefit high-multiple cybersecurity names. Growth factor rotation signal concurrent.",
+    },
+    oneLiner: "🟢 CRWD SWEEP — $920K | Near ATM | Cybersecurity theme | Low IV 58%",
+    detectedAt: "2026-03-12T17:45:00Z", timeAgo: "2h 45m ago",
+    sparklineData: UP, sparklineTrend: "up",
+  },
+
+  // ── 14. CRWD Block — $400C Jun19 — Long-dated ────────────────────────────
+  {
+    id: "feed-014",
+    symbol: "CRWD", companyName: "CrowdStrike Holdings", sector: "Information Technology", industry: "Systems Software",
+    signalKind: "block", signalLabel: "Block", direction: "bullish", isCombo: false,
+    legs: [{ optionType: "call", strike: 400, expiration: "Jun 19", expirationISO: "2026-06-19", dte: 99, side: "buy", contracts: 800, premium: 740000, impliedVol: 0.54, delta: 0.38 }],
+    optionType: "call", strike: 400, expiration: "Jun 19", expirationISO: "2026-06-19", dte: 99,
+    contracts: 800, premium: 740000, volOiRatio: 1.9, openInterest: 421, impliedVol: 0.54, delta: 0.38, underlyingPrice: 375,
+    totalScore: 73, feedScore: 66, noveltyScore: 44, institutionalScore: 90, confidence: 0.72, unusualness: "noteworthy",
+    hasKnownCatalyst: false,
+    events: [],
+    earningsWithinExpiry: false,
+    primaryTheme: "Defense & Cyber", primaryThemeEmoji: "🛡️",
+    activePeers: [], etfMembership: ["QQQ"],
+    tags: ["$CRWD","90DTE+","BlockTrade","BullishFlow","DefensePlay"],
+    explanations: {
+      tweetShort: "🟢 $CRWD Block — 800 calls @$400 Jun 19. $740K. 99DTE. Long-dated institutional positioning. Score 73.",
+      retailPlain: "An institutional block appeared in CrowdStrike's June $400 calls — a long-dated bet with 99 days until expiry. The $400 strike is about 6.7% above current levels. Long-dated institutional blocks like this are often position-building ahead of anticipated catalysts that may not be on the public calendar. With CrowdStrike's annual Fal.Con conference typically in fall, this could also be a pure fundamental bet on the company's AI-native security platform gaining share throughout the year.",
+      traderPro: "Long-dated block in CRWD $400C Jun 19 (99 DTE), 800 contracts for $740K (~$9.25/contract). Vol/OI: 1.9×. IV: 54%. δ0.38. OTM ~6.7% (spot $375). Score: 73/100. Very high institutional score (90/100) — 99 DTE blocks of this size are almost exclusively institutional. Low IV (54%) suggests vol not pumped; convex risk profile. No known catalyst — patient positioning. Long-dated OTM block with high institutional score = strongest type of 'smart money' signal. Earnings and multiple conferences will fall within 99-day window.",
+    },
+    oneLiner: "🟢 CRWD BLOCK — $740K | 99DTE long-dated | Institutional fingerprint 90/100",
+    detectedAt: "2026-03-12T17:30:00Z", timeAgo: "3h ago",
+    sparklineData: SUP, sparklineTrend: "up",
+  },
+
+  // ── 15. IWM Block — $210P Mar21 — Bearish / Fed hedge ───────────────────
+  {
+    id: "feed-015",
+    symbol: "IWM", companyName: "iShares Russell 2000 ETF", sector: "ETF", industry: "Small Cap",
+    signalKind: "block", signalLabel: "Block", direction: "bearish", isCombo: false,
+    legs: [{ optionType: "put", strike: 210, expiration: "Mar 21", expirationISO: "2026-03-21", dte: 9, side: "buy", contracts: 8000, premium: 2100000, impliedVol: 0.28, delta: -0.38 }],
+    optionType: "put", strike: 210, expiration: "Mar 21", expirationISO: "2026-03-21", dte: 9,
+    contracts: 8000, premium: 2100000, volOiRatio: 2.1, openInterest: 3809, impliedVol: 0.28, delta: -0.38, underlyingPrice: 218,
+    totalScore: 80, feedScore: 75, noveltyScore: 50, institutionalScore: 92, confidence: 0.80, unusualness: "extreme",
+    hasKnownCatalyst: true,
+    events: [
+      { type: "fomc", label: "FOMC Rate Decision", daysAway: 6, importance: "high", beforeExpiry: true, emoji: "🏛️" },
+      { type: "opex", label: "Quarterly Witching OPEX", daysAway: 8, importance: "high", beforeExpiry: true, emoji: "⏰" },
+    ],
+    nearestEventLabel: "FOMC Rate Decision", daysToNearestEvent: 6, earningsWithinExpiry: false,
+    primaryTheme: "Macro / Rates", primaryThemeEmoji: "📈", primaryFactor: "Small Cap / Size", primaryFactorEmoji: "📦",
+    activePeers: ["SPY", "QQQ"], etfMembership: [],
+    tags: ["$IWM","0-7DTE","BlockTrade","BearishHedge","MacroFlow","FedWeek","OPEXWeek","WhaleSize","ETFFlow","PeerSync","HighConviction"],
+    explanations: {
+      tweetShort: "🔴 $IWM Block — 8K puts @$210 Mar 21. $2.1M. 2.1x vol/OI. Score 80. FOMC + Quarterly OPEX in 9d. Fed hedge.",
+      retailPlain: "A massive put block appeared in the iShares Russell 2000 ETF (IWM) — 8,000 contracts for $2.1M in premium, expiring in just 9 days to capture the FOMC rate decision and quarterly options expiration. Small caps (IWM) are very sensitive to interest rates because small companies rely more on floating-rate debt. This looks like a large institutional portfolio hedge ahead of FOMC: if the Fed signals rates stay higher for longer, small caps get hurt more than large caps, and this put position would pay off. SPY and QQQ are seeing concurrent macro-related flow.",
+      traderPro: "Block put in IWM $210P Mar 21 (9 DTE), 8,000 contracts for $2.1M (~$2.63/contract). Vol/OI: 2.1×. IV: 28%. δ-0.38. Spot $218, strike $210 is 3.7% OTM. Score: 80/100. Extreme unusualness. Very high institutional (92/100) — portfolio-level hedging. Short DTE captures FOMC (6d) + Quarterly OPEX (8d). Low IV (28%) for IWM is normal — ETF vol is compressed vs single name. At $2.63/contract for ETF puts, this is cheap portfolio insurance with asymmetric payoff. Small Cap factor active. Rate-cut delay (hawkish FOMC) thesis. SPY+QQQ also seeing neutral/protective flow.",
+    },
+    oneLiner: "🔴 IWM BLOCK — $2.1M | 8,000 puts | FOMC + OPEX hedge | Institutional 92/100",
+    detectedAt: "2026-03-12T17:14:00Z", timeAgo: "3h 16m ago",
+    sparklineData: DOWN, sparklineTrend: "down",
+  },
+
+  // ── 16. IWM Sweep — $220C Apr17 — Bullish / Fed pivot bet ───────────────
+  {
+    id: "feed-016",
+    symbol: "IWM", companyName: "iShares Russell 2000 ETF", sector: "ETF", industry: "Small Cap",
+    signalKind: "sweep", signalLabel: "Sweep", direction: "bullish", isCombo: false,
+    legs: [{ optionType: "call", strike: 220, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36, side: "buy", contracts: 5500, premium: 1600000, impliedVol: 0.26, delta: 0.42 }],
+    optionType: "call", strike: 220, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36,
+    contracts: 5500, premium: 1600000, volOiRatio: 3.4, openInterest: 1617, impliedVol: 0.26, delta: 0.42, underlyingPrice: 218,
+    totalScore: 76, feedScore: 70, noveltyScore: 55, institutionalScore: 88, confidence: 0.75, unusualness: "unusual",
+    hasKnownCatalyst: true,
+    events: [
+      { type: "fomc", label: "FOMC Rate Decision", daysAway: 6, importance: "high", beforeExpiry: true, emoji: "🏛️" },
+    ],
+    nearestEventLabel: "FOMC Rate Decision", daysToNearestEvent: 6, earningsWithinExpiry: false,
+    primaryTheme: "Macro / Rates", primaryThemeEmoji: "📈",
+    activePeers: ["SPY"], etfMembership: [],
+    tags: ["$IWM","30DTE","SweepLike","BullishFlow","MacroFlow","FedWeek","WhaleSize","ETFFlow","HighConviction"],
+    explanations: {
+      tweetShort: "🟢 $IWM Sweep — 5.5K calls @$220 Apr 17. $1.6M. 3.4x vol/OI. Score 76. Fed pivot bet. Small caps would rip.",
+      retailPlain: "A large bullish call sweep appeared in IWM — betting that small caps will rally over the next 36 days. The $220 strike is just 0.9% above current levels, making this a near-the-money bet on a near-term rally. Small caps are among the biggest beneficiaries of Fed rate cuts since they rely on floating-rate financing. This is effectively a bet that the FOMC meeting in 6 days delivers dovish messaging — or at least doesn't deliver hawkish surprises. The combination of bearish IWM puts (Post #15) and these bullish calls creates a fascinating 'FOMC binary' dynamic.",
+      traderPro: "Sweep in IWM $220C Apr 17 (36 DTE), 5,500 contracts for $1.6M (~$2.91/contract). Vol/OI: 3.4×. IV: 26%. δ0.42. Near-ATM (spot $218). Score: 76/100. Note: Concurrent with $210P block (feed-015) — market participants are positioning for FOMC binary (either hawkish-down or dovish-up in small caps). This call sweep suggests more participants positioned for dovish surprise. Institutional (88/100). Rate-cut duration extension thesis. IWM + SPY concurrent flow suggests macro-level positioning vs individual name selection.",
+    },
+    oneLiner: "🟢 IWM SWEEP — $1.6M | Near ATM | Fed pivot bet | vs concurrent put hedge",
+    detectedAt: "2026-03-12T16:58:00Z", timeAgo: "3h 32m ago",
+    sparklineData: FLAT, sparklineTrend: "flat",
+  },
+
+  // ── 17. XLF Put Spread — Bearish / Bank hedge ────────────────────────────
+  {
+    id: "feed-017",
+    symbol: "XLF", companyName: "Financial Select Sector SPDR", sector: "ETF", industry: "Financials",
+    signalKind: "combo", signalLabel: "Put Spread", direction: "bearish", isCombo: true,
+    legs: [
+      { optionType: "put", strike: 42, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36, side: "buy",  contracts: 10000, premium: 1400000, impliedVol: 0.22, delta: -0.38 },
+      { optionType: "put", strike: 38, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36, side: "sell", contracts: 10000, premium:  400000, impliedVol: 0.20, delta: -0.18 },
+    ],
+    optionType: "put", strike: 42, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36,
+    contracts: 10000, premium: 1800000, volOiRatio: 2.6, openInterest: 3846, impliedVol: 0.22, delta: -0.38, underlyingPrice: 44,
+    totalScore: 75, feedScore: 68, noveltyScore: 58, institutionalScore: 94, confidence: 0.76, unusualness: "unusual",
+    hasKnownCatalyst: true,
+    events: [
+      { type: "fomc", label: "FOMC Rate Decision", daysAway: 6, importance: "high", beforeExpiry: true, emoji: "🏛️" },
+    ],
+    nearestEventLabel: "FOMC Rate Decision", daysToNearestEvent: 6, earningsWithinExpiry: false,
+    primaryTheme: "Macro / Rates", primaryThemeEmoji: "📈",
+    activePeers: ["IWM", "SPY"], etfMembership: [],
+    tags: ["$XLF","30DTE","ComboTrade","BearishHedge","MacroFlow","FedWeek","WhaleSize","ETFFlow","LunchHourPrint"],
+    explanations: {
+      tweetShort: "🔴 $XLF Put Spread — $42P/$38P Apr 17. 10K contracts. $1.8M net debit. Score 75. Bank hedge vs FOMC.",
+      retailPlain: "A massive bearish put spread appeared in XLF, the Financial sector ETF. The trader bought 10,000 $42 puts and sold 10,000 $38 puts for April 17th — paying $1.8M net for protection if financials drop to $38-42 by expiry. With FOMC in 6 days, bank stocks are sensitive to Fed language about rate cuts. If the Fed signals rates stay elevated, bank net interest margins and loan books face pressure. The $42-$38 spread covers a 4.5-9% downside zone — a defined, institutional-quality hedge.",
+      traderPro: "Bear put spread in XLF Apr 17 (36 DTE): buy $42P / sell $38P, 10,000 contracts, $1.8M net debit ($1.80/spread). Max gain: $4.00/spread ($4M) if XLF ≤$38 at expiry. Breakeven: $40.20. Coverage zone: $38-$42 (4.5-9% downside from $44). IV: 22% (ETF vol — compressed). Score: 75/100. Extremely high institutional score (94/100) — spread structure + 10K contract size is characteristic of portfolio risk management, not speculative directional trade. FOMC binary: hawkish = banks sell off on NIM compression and credit quality concerns. Defines max loss ($1.8M) while retaining $4M max payout.",
+    },
+    oneLiner: "🔴 XLF PUT SPREAD — $1.8M | $42P/$38P | Bank FOMC hedge | Institutional 94/100",
+    detectedAt: "2026-03-12T16:42:00Z", timeAgo: "3h 48m ago",
+    sparklineData: DOWN, sparklineTrend: "down",
+  },
+
+  // ── 18. XLF Block — $46C Apr17 — Bullish ────────────────────────────────
+  {
+    id: "feed-018",
+    symbol: "XLF", companyName: "Financial Select Sector SPDR", sector: "ETF", industry: "Financials",
+    signalKind: "block", signalLabel: "Block", direction: "bullish", isCombo: false,
+    legs: [{ optionType: "call", strike: 46, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36, side: "buy", contracts: 6000, premium: 1200000, impliedVol: 0.20, delta: 0.35 }],
+    optionType: "call", strike: 46, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36,
+    contracts: 6000, premium: 1200000, volOiRatio: 1.8, openInterest: 3333, impliedVol: 0.20, delta: 0.35, underlyingPrice: 44,
+    totalScore: 71, feedScore: 64, noveltyScore: 44, institutionalScore: 90, confidence: 0.71, unusualness: "unusual",
+    hasKnownCatalyst: true,
+    events: [
+      { type: "fomc", label: "FOMC Rate Decision", daysAway: 6, importance: "high", beforeExpiry: true, emoji: "🏛️" },
+    ],
+    nearestEventLabel: "FOMC Rate Decision", daysToNearestEvent: 6, earningsWithinExpiry: false,
+    primaryTheme: "Macro / Rates", primaryThemeEmoji: "📈",
+    activePeers: [], etfMembership: [],
+    tags: ["$XLF","30DTE","BlockTrade","BullishFlow","MacroFlow","FedWeek","WhaleSize","ETFFlow"],
+    explanations: {
+      tweetShort: "🟢 $XLF Block — 6K calls @$46 Apr 17. $1.2M. 1.8x vol/OI. Score 71. Bullish financials vs FOMC pivot.",
+      retailPlain: "A large bullish call block appeared in XLF, the Financial sector ETF, at the $46 strike for April 17th. With the ETF trading near $44, this is about 4.5% out of the money — a moderate upside bet. Interestingly, this contrasts with the bearish put spread on XLF from earlier today, suggesting the market is split on the FOMC outlook for financials. The bullish case: rate cuts boost bank earnings through lower funding costs, driving XLF higher. This looks like an institutional bet on a dovish FOMC surprise.",
+      traderPro: "Block in XLF $46C Apr 17 (36 DTE), 6,000 contracts for $1.2M (~$2.00/contract). Vol/OI: 1.8×. IV: 20%. δ0.35. OTM ~4.5% (spot $44). Score: 71/100. Institutional (90/100). Note: Concurrent with bearish $42P/$38P spread (feed-017) — the two-sided positioning creates an interesting read: portfolio managers hedging both up and down scenarios vs FOMC binary. Combined premium: $3M in XLF options with 6d to FOMC. Low IV (20%) keeps costs minimal. This call block has higher institutional quality than typical ETF positioning.",
+    },
+    oneLiner: "🟢 XLF BLOCK — $1.2M | Bullish vs concurrent bearish hedge | FOMC binary",
+    detectedAt: "2026-03-12T16:27:00Z", timeAgo: "4h 3m ago",
+    sparklineData: FLAT, sparklineTrend: "flat",
+  },
+
+  // ── 19. XBI Block — $80P Mar21 — Bearish / FDA hedge ────────────────────
+  {
+    id: "feed-019",
+    symbol: "XBI", companyName: "SPDR S&P Biotech ETF", sector: "ETF", industry: "Biotech",
+    signalKind: "block", signalLabel: "Block", direction: "bearish", isCombo: false,
+    legs: [{ optionType: "put", strike: 80, expiration: "Mar 21", expirationISO: "2026-03-21", dte: 9, side: "buy", contracts: 6000, premium: 680000, impliedVol: 0.38, delta: -0.42 }],
+    optionType: "put", strike: 80, expiration: "Mar 21", expirationISO: "2026-03-21", dte: 9,
+    contracts: 6000, premium: 680000, volOiRatio: 4.8, openInterest: 1250, impliedVol: 0.38, delta: -0.42, underlyingPrice: 84,
+    totalScore: 66, feedScore: 60, noveltyScore: 72, institutionalScore: 80, confidence: 0.67, unusualness: "noteworthy",
+    hasKnownCatalyst: true,
+    events: [
+      { type: "fda", label: "FDA AdCom — CRISPR Therapy", daysAway: 2, importance: "high", beforeExpiry: true, emoji: "💊" },
+      { type: "opex", label: "Quarterly Witching OPEX", daysAway: 8, importance: "high", beforeExpiry: true, emoji: "⏰" },
+    ],
+    nearestEventLabel: "FDA AdCom — CRISPR Therapy", daysToNearestEvent: 2, earningsWithinExpiry: false,
+    primaryTheme: "Biotech & Genomics", primaryThemeEmoji: "🧬",
+    activePeers: ["MRNA"], etfMembership: [],
+    tags: ["$XBI","0-7DTE","BlockTrade","BearishHedge","BiotechPlay","FDAWatch","OPEXWeek","VolOISpike","ETFFlow","HighConviction"],
+    explanations: {
+      tweetShort: "🔴 $XBI Block — 6K puts @$80 Mar 21. $680K. 4.8x vol/OI. FDA AdCom in 2d. Score 66. Biotech binary hedge.",
+      retailPlain: "A large bearish put block appeared in XBI — the biotech ETF — expiring in just 9 days to capture an FDA Advisory Committee meeting happening in only 2 days. The FDA AdCom is reviewing a novel CRISPR therapy, and negative guidance from this committee could send the entire biotech sector lower (XBI holds CRSP, EDIT, and similar names). With 6,000 contracts and 4.8× the open interest, this is new money betting on a bearish FDA outcome for the sector. Biotech binary events like FDA decisions can cause 20-30% moves in individual names and meaningful moves in the broader ETF.",
+      traderPro: "Block put in XBI $80P Mar 21 (9 DTE), 6,000 contracts for $680K (~$1.13/contract). Vol/OI: 4.8×. IV: 38%. δ-0.42. Spot $84, strike $80 is 4.8% OTM. Score: 66/100. FDA AdCom in 2d is the direct catalyst — XBI includes CRSP, EDIT, NTLA (all CRISPR-adjacent). A negative AdCom recommendation would trigger XBI sector-wide selling. High novelty (72) — unusual for this specific contract. Short DTE + FDA catalyst = binary event positioning. Quarterly OPEX in 8d amplifies gamma. Institutional (80/100). MRNA also seeing unusual activity in biotech cluster.",
+    },
+    oneLiner: "🔴 XBI BLOCK — $680K | FDA AdCom in 2d | CRISPR binary | 4.8x vol/OI",
+    detectedAt: "2026-03-12T16:11:00Z", timeAgo: "4h 19m ago",
+    sparklineData: VDOWN, sparklineTrend: "down",
+  },
+
+  // ── 20. XBI Sweep — $90C Apr17 — Bullish / FDA catalyst bet ─────────────
+  {
+    id: "feed-020",
+    symbol: "XBI", companyName: "SPDR S&P Biotech ETF", sector: "ETF", industry: "Biotech",
+    signalKind: "sweep", signalLabel: "Sweep", direction: "bullish", isCombo: false,
+    legs: [{ optionType: "call", strike: 90, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36, side: "buy", contracts: 3000, premium: 560000, impliedVol: 0.42, delta: 0.30 }],
+    optionType: "call", strike: 90, expiration: "Apr 17", expirationISO: "2026-04-17", dte: 36,
+    contracts: 3000, premium: 560000, volOiRatio: 3.6, openInterest: 833, impliedVol: 0.42, delta: 0.30, underlyingPrice: 84,
+    totalScore: 68, feedScore: 61, noveltyScore: 68, institutionalScore: 70, confidence: 0.66, unusualness: "noteworthy",
+    hasKnownCatalyst: true,
+    events: [
+      { type: "fda", label: "FDA AdCom — CRISPR Therapy", daysAway: 2, importance: "high", beforeExpiry: true, emoji: "💊" },
+      { type: "fda", label: "MRNA PDUFA (RSV Adult)", daysAway: 7, importance: "high", beforeExpiry: true, emoji: "💊" },
+    ],
+    nearestEventLabel: "FDA AdCom — CRISPR Therapy", daysToNearestEvent: 2, earningsWithinExpiry: false,
+    primaryTheme: "Biotech & Genomics", primaryThemeEmoji: "🧬",
+    activePeers: ["MRNA"], etfMembership: [],
+    tags: ["$XBI","30DTE","SweepLike","BullishFlow","BiotechPlay","FDAWatch","VolOISpike","ETFFlow"],
+    explanations: {
+      tweetShort: "🟢 $XBI Sweep — 3K calls @$90 Apr 17. $560K. 3.6x vol/OI. Score 68. FDA AdCom 2d + MRNA PDUFA 7d. Bull FDA bet.",
+      retailPlain: "A bullish call sweep appeared in XBI, the biotech ETF, betting on a rally over the next 36 days. With two major FDA catalysts in the window — an FDA Advisory Committee meeting in 2 days (CRISPR therapy) and the MRNA RSV vaccine FDA decision in 7 days — this is a 'bullish FDA binary' bet: the trader believes at least one of these events will be positive for the sector. MRNA is already seeing its own bullish flow (see earlier post). The $90 strike is 7.1% above current levels, so XBI needs a meaningful move to profit.",
+      traderPro: "OTM call sweep in XBI $90C Apr 17 (36 DTE), 3,000 contracts for $560K (~$1.87/contract). Vol/OI: 3.6×. IV: 42%. δ0.30. Strike $90 is 7.1% OTM (spot $84). Score: 68/100. Dual FDA catalysts within expiry: AdCom in 2d, MRNA PDUFA in 7d. Sector-wide positive FDA outcomes could drive XBI +5-10%. Contrasts with bearish $80P block from same session — binary positioning. High novelty (68). MRNA peer activity concurrent (bullish). Moderate institutional (70/100) — call structure with OTM strike suggests retail participation alongside institutional.",
+    },
+    oneLiner: "🟢 XBI SWEEP — $560K | FDA AdCom 2d + MRNA PDUFA 7d | Bullish biotech binary",
+    detectedAt: "2026-03-12T15:55:00Z", timeAgo: "4h 35m ago",
+    sparklineData: UP, sparklineTrend: "up",
+  },
+];

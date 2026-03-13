@@ -1,0 +1,474 @@
+// Unusual Flow Radar — Prisma Schema
+// PostgreSQL + Prisma ORM
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Underlying Asset ──────────────────────────────────────────────────────────
+
+model Underlying {
+  id           String   @id @default(cuid())
+  symbol       String   @unique
+  name         String
+  exchange     String   @default("UNKNOWN")
+  sector       String?
+  industry     String?
+  marketCap    Float?
+  avgVolume30d Float?
+  beta         Float?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  contracts    OptionContract[]
+  earnings     EarningsEvent[]
+  fdaCatalysts FdaCatalyst[]
+  watchlists   UserWatchlist[]
+  peerMembers  PeerGroupMember[]
+  themeMembers ThemeBucketMember[]
+  factorMembers FactorBucketMember[]
+  signals      DetectedSignal[]
+
+  @@index([sector])
+}
+
+// ─── Options Chain / Contracts ─────────────────────────────────────────────────
+
+model OptionContract {
+  id             String   @id @default(cuid())
+  /// Polygon option ticker e.g. O:AAPL231215C00180000
+  ticker         String   @unique
+  underlying     String
+  expirationDate DateTime @db.Date
+  strike         Float
+  optionType     OptionType
+  /// DTE at time of first observation
+  initialDte     Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  underlyingRef  Underlying       @relation(fields: [underlying], references: [symbol])
+  trades         OptionTrade[]
+  quotes         OptionQuote[]
+  snapshots      OptionSnapshot[]
+  oiHistory      OIHistory[]
+  signalLegs     SignalLeg[]
+
+  @@index([underlying, expirationDate])
+  @@index([underlying, optionType, strike])
+}
+
+enum OptionType {
+  call
+  put
+}
+
+// ─── Option Trade (from Polygon trades feed) ───────────────────────────────────
+
+model OptionTrade {
+  id             String     @id @default(cuid())
+  contractTicker String
+  /// Unix ms timestamp from Polygon
+  exchangeTime   DateTime
+  price          Float
+  size           Int
+  /// Total premium = price * size * 100
+  premium        Float
+  conditions     Int[]
+  /// Exchange ID (Polygon numeric)
+  exchangeId     Int?
+  /// Inferred aggressor side
+  side           TradeSide  @default(unknown)
+  /// Sequence number for dedup
+  sequenceNumber BigInt?
+  /// Raw tape (A=NYSE, B=AMEX, C=NASDAQ)
+  tape           String?
+  createdAt      DateTime   @default(now())
+
+  contract OptionContract @relation(fields: [contractTicker], references: [ticker])
+
+  @@index([contractTicker, exchangeTime])
+  @@index([exchangeTime])
+}
+
+enum TradeSide {
+  buy
+  sell
+  unknown
+}
+
+// ─── Option Quote ──────────────────────────────────────────────────────────────
+
+model OptionQuote {
+  id             String   @id @default(cuid())
+  contractTicker String
+  quoteTime      DateTime
+  bidPrice       Float
+  askPrice       Float
+  bidSize        Int
+  askSize        Int
+  midpoint       Float
+  spread         Float
+  createdAt      DateTime @default(now())
+
+  contract OptionContract @relation(fields: [contractTicker], references: [ticker])
+
+  @@index([contractTicker, quoteTime])
+}
+
+// ─── Option Snapshot (Greeks + OI at a point in time) ─────────────────────────
+
+model OptionSnapshot {
+  id              String   @id @default(cuid())
+  contractTicker  String
+  snapshotTime    DateTime
+  impliedVol      Float?
+  delta           Float?
+  gamma           Float?
+  theta           Float?
+  vega            Float?
+  rho             Float?
+  openInterest    Int?
+  volume          Int?
+  lastPrice       Float?
+  underlyingPrice Float?
+  /// IV Rank 0-100 vs trailing 52-week range
+  ivRank          Float?
+  /// IV Percentile 0-100 vs trailing 252-day population
+  ivPercentile    Float?
+  createdAt       DateTime @default(now())
+
+  contract OptionContract @relation(fields: [contractTicker], references: [ticker])
+
+  @@index([contractTicker, snapshotTime])
+}
+
+// ─── Open Interest History ─────────────────────────────────────────────────────
+
+model OIHistory {
+  id             String   @id @default(cuid())
+  contractTicker String
+  date           DateTime @db.Date
+  openInterest   Int
+  createdAt      DateTime @default(now())
+
+  contract OptionContract @relation(fields: [contractTicker], references: [ticker])
+
+  @@unique([contractTicker, date])
+  @@index([contractTicker])
+}
+
+// ─── Earnings Events ──────────────────────────────────────────────────────────
+
+model EarningsEvent {
+  id           String   @id @default(cuid())
+  symbol       String
+  reportDate   DateTime @db.Date
+  reportTime   String?  // BMO / AMC / unconfirmed
+  estimatedEps Float?
+  actualEps    Float?
+  quarter      String?  // e.g. Q3 2024
+  fiscalYear   Int?
+  isConfirmed  Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  underlying Underlying @relation(fields: [symbol], references: [symbol])
+
+  @@index([symbol, reportDate])
+  @@index([reportDate])
+}
+
+// ─── Macro Events ─────────────────────────────────────────────────────────────
+
+model MacroEvent {
+  id          String        @id @default(cuid())
+  eventType   MacroEventType
+  eventName   String
+  eventDate   DateTime
+  importance  EventImportance
+  description String?
+  createdAt   DateTime      @default(now())
+
+  @@index([eventDate])
+}
+
+enum MacroEventType {
+  FED_MEETING
+  CPI
+  PPI
+  NFP
+  GDP
+  FOMC_MINUTES
+  JACKSON_HOLE
+  OTHER
+}
+
+enum EventImportance {
+  high
+  medium
+  low
+}
+
+// ─── FDA Catalysts ────────────────────────────────────────────────────────────
+
+model FdaCatalyst {
+  id            String   @id @default(cuid())
+  symbol        String
+  drugName      String
+  indication    String?
+  catalystType  String   // PDUFA, Advisory Committee, Study Results, etc.
+  catalystDate  DateTime @db.Date
+  isConfirmed   Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  underlying Underlying @relation(fields: [symbol], references: [symbol])
+
+  @@index([symbol, catalystDate])
+  @@index([catalystDate])
+}
+
+// ─── Peer Groups ──────────────────────────────────────────────────────────────
+
+model PeerGroup {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+
+  members PeerGroupMember[]
+}
+
+model PeerGroupMember {
+  id          String   @id @default(cuid())
+  peerGroupId String
+  symbol      String
+
+  peerGroup  PeerGroup  @relation(fields: [peerGroupId], references: [id], onDelete: Cascade)
+  underlying Underlying @relation(fields: [symbol], references: [symbol])
+
+  @@unique([peerGroupId, symbol])
+}
+
+// ─── Theme Buckets ────────────────────────────────────────────────────────────
+
+model ThemeBucket {
+  id          String   @id @default(cuid())
+  name        String   // "AI Infrastructure", "GLP-1 / Obesity", "EV + Charging", etc.
+  slug        String   @unique
+  description String?
+  emoji       String?
+  color       String?  // hex color for UI
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members  ThemeBucketMember[]
+  clusters SignalCluster[]
+}
+
+model ThemeBucketMember {
+  id            String   @id @default(cuid())
+  themeBucketId String
+  symbol        String
+  weight        Float    @default(1.0)
+
+  themeBucket ThemeBucket @relation(fields: [themeBucketId], references: [id], onDelete: Cascade)
+  underlying  Underlying  @relation(fields: [symbol], references: [symbol])
+
+  @@unique([themeBucketId, symbol])
+}
+
+// ─── Factor Buckets ───────────────────────────────────────────────────────────
+
+model FactorBucket {
+  id          String   @id @default(cuid())
+  name        String   // "High Beta", "Low Float", "Meme", "Deep Value", etc.
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+
+  members FactorBucketMember[]
+}
+
+model FactorBucketMember {
+  id             String   @id @default(cuid())
+  factorBucketId String
+  symbol         String
+  score          Float?
+
+  factorBucket FactorBucket @relation(fields: [factorBucketId], references: [id], onDelete: Cascade)
+  underlying   Underlying   @relation(fields: [symbol], references: [symbol])
+
+  @@unique([factorBucketId, symbol])
+}
+
+// ─── Detected Signals ─────────────────────────────────────────────────────────
+
+model DetectedSignal {
+  id           String      @id @default(cuid())
+  symbol       String
+  signalType   SignalType
+  direction    Direction
+  /// Composite score 0-100
+  totalScore   Float
+  confidence   Float       // 0-1
+  totalPremium Float
+  totalContracts Int
+  isCombo      Boolean     @default(false)
+
+  // ── Scoring dimensions (each 0-100) ──────────────────────────────────────
+  scoreVolOi         Float?   // vol/OI vs contract history
+  scoreNotional      Float?   // absolute premium size
+  scoreTimeOfDay     Float?   // intraday time anomaly
+  scoreIvAbnormality Float?   // IV vs historical range
+  scoreOiVelocity    Float?   // OI change rate
+  scoreEventProximity Float?  // proximity to known catalyst
+  scorePeerSync      Float?   // peer / sector synchronization
+  scoreDirectionality Float?  // directional confidence
+  scoreCombo         Float?   // multi-leg structure complexity
+  scoreThemeSync     Float?   // theme-level cluster synchronization
+  scoreNovelty       Float?   // no-known-event novelty
+
+  // ── Enrichment context ────────────────────────────────────────────────────
+  underlyingPrice    Float?
+  underlyingVolume   Float?
+  nearestEventType   String?
+  nearestEventDate   DateTime?
+  daysToNearestEvent Int?
+  themeId            String?
+  clusterId          String?
+
+  detectedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  underlying Underlying     @relation(fields: [symbol], references: [symbol])
+  legs       SignalLeg[]
+  feedPosts  FeedPost[]
+  cluster    SignalCluster? @relation(fields: [clusterId], references: [id])
+
+  @@index([symbol, detectedAt])
+  @@index([totalScore])
+  @@index([detectedAt])
+  @@index([direction, detectedAt])
+}
+
+enum SignalType {
+  single_leg
+  sweep
+  block
+  repeat_sweep
+  combo_spread
+  combo_straddle
+  combo_risk_reversal
+  combo_other
+}
+
+enum Direction {
+  bullish
+  bearish
+  neutral
+  mixed
+}
+
+// ─── Signal Legs ──────────────────────────────────────────────────────────────
+
+model SignalLeg {
+  id                    String     @id @default(cuid())
+  signalId              String
+  contractTicker        String
+  legNumber             Int        @default(1)
+  strike                Float
+  expiration            DateTime   @db.Date
+  optionType            OptionType
+  dte                   Int
+  side                  TradeSide
+  quantity              Int
+  premium               Float
+  priceAtTrade          Float
+  underlyingPriceAtTrade Float?
+  impliedVol            Float?
+  delta                 Float?
+  openInterest          Int?
+  dayVolume             Int?
+  tradeTime             DateTime
+
+  signal   DetectedSignal @relation(fields: [signalId], references: [id], onDelete: Cascade)
+  contract OptionContract @relation(fields: [contractTicker], references: [ticker])
+
+  @@index([signalId])
+}
+
+// ─── Signal Clusters ──────────────────────────────────────────────────────────
+
+model SignalCluster {
+  id            String      @id @default(cuid())
+  clusterType   ClusterType
+  name          String
+  signalCount   Int         @default(0)
+  totalPremium  Float       @default(0)
+  avgScore      Float?
+  direction     Direction?
+  themeBucketId String?
+  windowStart   DateTime
+  windowEnd     DateTime
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  signals     DetectedSignal[]
+  themeBucket ThemeBucket?     @relation(fields: [themeBucketId], references: [id])
+
+  @@index([windowStart, windowEnd])
+}
+
+enum ClusterType {
+  theme
+  sector
+  factor
+  event
+  ticker
+}
+
+// ─── Feed Posts ───────────────────────────────────────────────────────────────
+
+model FeedPost {
+  id          String    @id @default(cuid())
+  signalId    String
+  /// Short punchy headline
+  headline    String
+  /// Full body with retail-friendly explanation
+  body        String
+  /// Structured summary fields
+  emoji       String?
+  direction   Direction
+  totalScore  Float
+  premium     Float
+  /// Hashtag / cashtag array
+  tags        String[]
+  isPublished Boolean   @default(true)
+  publishedAt DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+
+  signal DetectedSignal @relation(fields: [signalId], references: [id], onDelete: Cascade)
+
+  @@index([publishedAt])
+  @@index([direction, publishedAt])
+}
+
+// ─── User Watchlist ───────────────────────────────────────────────────────────
+
+model UserWatchlist {
+  id       String   @id @default(cuid())
+  userId   String   @default("default")
+  symbol   String
+  addedAt  DateTime @default(now())
+
+  underlying Underlying @relation(fields: [symbol], references: [symbol])
+
+  @@unique([userId, symbol])
+  @@index([userId])
+}
