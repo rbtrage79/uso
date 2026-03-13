@@ -6,7 +6,9 @@ import { SignalCard } from "@/components/dashboard/signal-card";
 import { MOCK_UNDERLYINGS } from "@/data/mock-underlyings";
 import { generateMockChain } from "@/lib/polygon/mock";
 import { formatDollar, formatPct, formatIV, cn } from "@/lib/utils/formatting";
-import { TrendingUp, TrendingDown, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { TrendingUp, TrendingDown, ChevronDown, ChevronUp } from "lucide-react";
+import { StrikeHeatmap } from "@/components/ticker/strike-heatmap";
+import { MOCK_HEATMAP_AAPL } from "@/data/mock-heatmap";
 
 export default function TickerPage({ params }: { params: Promise<{ symbol: string }> }) {
   const { symbol } = use(params);
@@ -15,6 +17,7 @@ export default function TickerPage({ params }: { params: Promise<{ symbol: strin
   const { signals } = useSignals({ symbols: [sym] });
 
   const [selectedExpiry, setSelectedExpiry] = useState("all");
+  const [heatmapOpen, setHeatmapOpen] = useState(true);
 
   const spot = underlying?.currentPrice ?? 100;
   const chain = generateMockChain(sym, spot, 30);
@@ -132,6 +135,31 @@ export default function TickerPage({ params }: { params: Promise<{ symbol: strin
             <p className="text-xs text-zinc-600 text-center py-8">No signals detected for {sym}.</p>
           )}
         </div>
+      </div>
+
+      {/* Options Flow Heatmap */}
+      <div className="bg-surface-raised border border-surface-border rounded-lg overflow-hidden">
+        <button
+          onClick={() => setHeatmapOpen((o) => !o)}
+          className="w-full flex items-center justify-between px-4 py-2.5 border-b border-surface-border hover:bg-surface-muted/30 transition-colors"
+        >
+          <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+            Options Flow Heatmap
+          </h2>
+          {heatmapOpen
+            ? <ChevronUp className="w-4 h-4 text-zinc-500" />
+            : <ChevronDown className="w-4 h-4 text-zinc-500" />
+          }
+        </button>
+        {heatmapOpen && (
+          <div className="p-4">
+            <StrikeHeatmap
+              cells={MOCK_HEATMAP_AAPL}
+              underlyingPrice={spot}
+              symbol={sym}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

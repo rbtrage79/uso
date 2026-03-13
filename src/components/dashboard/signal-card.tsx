@@ -3,6 +3,8 @@
 import { formatRelativeTime, formatDollar, directionColor, directionBg, scoreColor, cn } from "@/lib/utils/formatting";
 import type { EnrichedSignal } from "@/types/signals";
 import { TrendingUp, TrendingDown, Minus, Layers, AlertCircle, Zap } from "lucide-react";
+import { ScoreLabelBadge } from "@/components/shared/score-label-badge";
+import { getLabelForSignal } from "@/lib/scoring/label";
 
 const SIGNAL_TYPE_LABEL: Record<string, string> = {
   single_leg: "Single",
@@ -23,6 +25,7 @@ interface SignalCardProps {
 
 export function SignalCard({ signal, compact, onClick }: SignalCardProps) {
   const leg = signal.legs[0];
+  const label = getLabelForSignal(signal);
   const premium = formatDollar(signal.totalPremium);
   const expDate = leg ? leg.expiration.toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "—";
   const iv = leg?.impliedVol != null ? `${(leg.impliedVol * 100).toFixed(0)}% IV` : null;
@@ -93,6 +96,13 @@ export function SignalCard({ signal, compact, onClick }: SignalCardProps) {
           </div>
         )}
       </div>
+
+      {/* Score label */}
+      {!compact && (
+        <div className="flex items-center gap-1.5">
+          <ScoreLabelBadge label={label} size="xs" />
+        </div>
+      )}
 
       {/* IV + context */}
       {!compact && (

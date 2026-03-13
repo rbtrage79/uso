@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { DEFAULT_SETTINGS } from "@/types/index";
 import { cn } from "@/lib/utils/formatting";
+import { SavedFiltersPanel } from "@/components/settings/saved-filters-panel";
+import { AlertSubscriptionsPanel } from "@/components/settings/alert-subscriptions-panel";
 
 // ─── UI helpers ───────────────────────────────────────────────────────────────
 
@@ -387,6 +389,20 @@ export default function SettingsPage() {
           onChange={(v) => updateSettings({ refreshInterval: v })}
           description="How often to check for new signals when auto-refresh is enabled"
         />
+      </Section>
+
+      {/* ── Saved Filters ── */}
+      <Section title="Saved Filters" description="Save and load filter presets for quick access" collapsible>
+        <div className="pt-3">
+          <SavedFiltersPanel />
+        </div>
+      </Section>
+
+      {/* ── Alert Subscriptions ── */}
+      <Section title="Alert Subscriptions" description="Configure per-symbol and label-type alerts" collapsible>
+        <div className="pt-3">
+          <AlertSubscriptionsPanel />
+        </div>
       </Section>
 
       {/* ── Watchlist ── */}

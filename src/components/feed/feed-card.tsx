@@ -2,10 +2,25 @@
 
 import { cn } from "@/lib/utils";
 import type { FeedPost } from "@/types/feed";
+import type { ScoreLabel } from "@/types/features";
 import { Sparkline } from "./sparkline";
 import { TagList } from "./tag-pill";
 import { ExplanationTabs } from "./explanation-tabs";
 import { ConfidenceTooltip } from "./confidence-tooltip";
+import { ScoreLabelBadge } from "@/components/shared/score-label-badge";
+
+/** Derive a ScoreLabel from FeedPost fields (mirrors getLabelForSignal logic) */
+function getLabelForFeedPost(post: FeedPost): ScoreLabel {
+  if (post.totalScore >= 80 && post.confidence >= 0.75) return "Smart Money? High Confidence";
+  if (post.isCombo && post.direction === "neutral") return "Volatility Bid";
+  if (post.hasKnownCatalyst && (post.daysToNearestEvent ?? 99) <= 14) return "Event Chase";
+  if (post.direction === "bearish" && post.premium >= 500_000) return "Hedge Wave";
+  if (post.primaryFactor && post.totalScore >= 60) return "Factor Rotation";
+  if (post.noveltyScore >= 55 && !post.hasKnownCatalyst) return "Quiet Accumulation";
+  if (post.volOiRatio >= 2.5 && post.totalScore >= 60) return "Breakout Speculation";
+  if (post.totalScore >= 65 && post.confidence < 0.55) return "Smart Money? Low Confidence";
+  return "Quiet Accumulation";
+}
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -61,6 +76,7 @@ export function FeedCard({ post, onOpen, onClick, onTagClick, activeTag, compact
   const unusual = UNUSUALNESS_CONFIG[post.unusualness];
   const sc      = scoreColor(post.totalScore);
   const handleClick = onOpen ?? onClick;
+  const label   = getLabelForFeedPost(post);
 
   return (
     <article
@@ -99,6 +115,9 @@ export function FeedCard({ post, onOpen, onClick, onTagClick, activeTag, compact
             <span className="px-1.5 py-0.5 rounded bg-zinc-800/80 text-zinc-300 text-[11px] font-medium border border-zinc-700/50">
               {post.signalLabel}
             </span>
+
+            {/* Score label badge */}
+            <ScoreLabelBadge label={label} size="sm" />
 
             {/* Unusualness */}
             <span className={cn("px-1.5 py-0.5 rounded border text-[10px] font-bold tracking-wide hidden sm:inline-flex", unusual.cls)}>
