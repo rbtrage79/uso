@@ -13,10 +13,20 @@ import { enrichSignalBatch } from "@/lib/enrichment/signal-enricher";
 import { detectThemeClusters } from "@/lib/enrichment/theme-enricher";
 import { detectFactorRotations } from "@/lib/enrichment/factor-enricher";
 import { MOCK_SIGNALS } from "@/data/mock-signals";
-import type { DetectedSignalPayload } from "@/types/signals";
+import type { DetectedSignalPayload, Direction } from "@/types/signals";
 
 function isMockMode(): boolean {
   return process.env.MOCK_MODE === "true" || !process.env.POLYGON_API_KEY;
+}
+
+/**
+ * Narrows the Prisma Direction enum (which includes "mixed") to the union
+ * accepted by theme/factor enrichers ("bullish" | "bearish" | "neutral").
+ * "mixed" signals (e.g. straddles) are non-directional, so "neutral" is the
+ * correct semantic mapping for cluster and rotation analysis.
+ */
+function toThemeDirection(d: Direction): "bullish" | "bearish" | "neutral" {
+  return d === "mixed" ? "neutral" : d;
 }
 
 export async function POST(req: NextRequest) {
@@ -71,7 +81,7 @@ export async function POST(req: NextRequest) {
     // Also compute global cluster views
     const themeSignals = payloads.map((p) => ({
       symbol: p.symbol,
-      direction: p.direction,
+      direction: toThemeDirection(p.direction),
       totalScore: p.totalScore,
       totalPremium: p.totalPremium,
     }));
@@ -129,7 +139,7 @@ export async function GET() {
 
   const enriched = await enrichSignalBatch(payloads);
   const themeSignals = payloads.map((p) => ({
-    symbol: p.symbol, direction: p.direction,
+    symbol: p.symbol, direction: toThemeDirection(p.direction),
     totalScore: p.totalScore, totalPremium: p.totalPremium,
   }));
   const themeClusters = detectThemeClusters(themeSignals);

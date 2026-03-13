@@ -14,7 +14,16 @@ import { enrichThemes, type ThemeEnrichment, type ActiveThemeSignal } from "./th
 import { enrichFactors, type FactorEnrichment, type FactorSignalInput } from "./factor-enricher";
 import { generateInsights, type InsightPayload, type InsightInput } from "./insight-generator";
 import { rankSignal, type RankingResult, type RankingInput } from "./alert-ranker";
-import type { DetectedSignalPayload } from "@/types/signals";
+import type { DetectedSignalPayload, Direction } from "@/types/signals";
+
+/**
+ * Narrows the Prisma Direction enum (which includes "mixed") to the union
+ * accepted by enrichment helpers ("bullish" | "bearish" | "neutral").
+ * "mixed" signals (e.g. straddles) are non-directional → "neutral".
+ */
+function toNarrowDirection(d: Direction): "bullish" | "bearish" | "neutral" {
+  return d === "mixed" ? "neutral" : d;
+}
 
 export interface FullyEnrichedSignal {
   // Base payload
@@ -99,7 +108,7 @@ export async function enrichSignal(
   // ── 5. Insight generation ───────────────────────────────────────────────────
   const insightInput: InsightInput = {
     symbol,
-    direction: payload.direction,
+    direction: toNarrowDirection(payload.direction),
     optionType: (primaryLeg?.optionType as "call" | "put") ?? "call",
     totalScore: payload.totalScore,
     totalPremium: payload.totalPremium,
@@ -159,7 +168,7 @@ export async function enrichSignalBatch(
   // First pass: build shared context (recent signal window = all payloads)
   const recentCtx: RecentSignalContext[] = payloads.map((p) => ({
     symbol: p.symbol,
-    direction: p.direction,
+    direction: toNarrowDirection(p.direction),
     totalScore: p.totalScore,
     totalPremium: p.totalPremium,
     dte: p.legs[0]?.dte,
